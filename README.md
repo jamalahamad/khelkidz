@@ -1,97 +1,87 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+﻿# KhelKidz
 
-# Getting Started
+KhelKidz is a React Native CLI educational game app for children aged 2-8. The app is designed around Hindi-first learning, English support, playful voice-guided games, positive feedback, and a reusable architecture for adding more educational content.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## What is built
 
-## Step 1: Start Metro
+- Professional kids home screen with mascot, language selector, daily challenge, coins, and continue learning.
+- Game library loaded from a central `GameRegistry`.
+- Ten initial game definitions: Color Quest, Shape Adventure, Number Safari, Math Magic, English ABC, Hindi Fun, Memory Match, Puzzle World, Word Builder, and Pattern Hero.
+- Color Quest as the richer reference game with eight progressive levels.
+- Level selection with locked/unlocked progression and star display.
+- Playable game screen with question prompts, answer grid, voice replay, friendly wrong-answer handling, haptics/audio service calls, scoring, rewards, and next-level flow.
+- Hindi default language with persistent settings through AsyncStorage.
+- Central design system, localization service, audio service, voice service, haptic service, ad abstraction, reward manager, progress manager, and game engine.
+- Unit tests for scoring, progress, registry coverage, and localization.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Folder structure
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+```text
+src/
+  app/                  App providers and lightweight navigation
+  components/           Reusable child-friendly UI
+  config/               App and feature configuration
+  design-system/        Theme, colors, spacing, radius, typography, shadows
+  features/             Home, games, levels, settings screens
+  games/engine/         Game sessions, scoring, rewards, progress, registry
+  games/definitions/    Declarative game content
+  locales/              Translation dictionaries
+  services/             Storage, localization, audio, voice, haptics, ads
+  store/                App settings and progress state
+  types/                Shared TypeScript contracts
+```
+
+## Development
 
 ```sh
-# Using npm
+npm install
 npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
 npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
 npm run ios
-
-# OR using Yarn
-yarn ios
+npm test
+npm run lint
+npx tsc --noEmit
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Architecture principles
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+- Visible UI text should use `t("key")` or localized content objects.
+- Games are data-driven through `GameDefinition`, `LevelDefinition`, and `QuestionDefinition`.
+- Game screens never call native audio, TTS, haptic, storage, or ad SDKs directly.
+- Progress is namespaced by game id so games can be added or removed safely.
+- Rewards are calculated centrally and rendered through the shared reward popup.
+- Theme tokens live in one place so product identity can change without rewriting screens.
 
-## Step 3: Modify your app
+## Adding a game
 
-Now that you have successfully run the app, let's make changes!
+1. Create a game definition in `src/games/definitions`.
+2. Add localized title, description, subject, learning metadata, accent color, icon, age range, and levels.
+3. Keep all prompts, instructions, options, and hints in Hindi and English.
+4. Add the game to `Games` in `src/games/definitions/index.ts`.
+5. Add tests for any custom question generation or rules.
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+Screens load from `GameRegistry`, so Home, Game Library, Level Select, and Game Play do not need game-specific rewrites.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## Localization
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+Hindi is selected by default. The app persists language in AsyncStorage using `khelkidz.settings`.
 
-## Congratulations! :tada:
+- Dictionary copy lives in `src/locales`.
+- Game content uses localized objects such as `{en, hi}`.
+- Missing dictionary keys fall back to English or a visible safe marker.
 
-You've successfully run and modified your React Native App. :partying_face:
+## Audio and voice
 
-### Now what?
+`AudioService` and `VoiceService` are production-facing abstractions. The current app safely no-ops when native assets or TTS are unavailable. Add recorded audio, background music, sound effects, or platform TTS inside these services without changing game UI.
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## Rewards and progress
 
-# Troubleshooting
+`ScoreManager` calculates score and stars. `RewardManager` converts level results into stars, coins, XP, badges, and level completion rewards. `ProgressManager` saves best score, stars, achievements, coins, and XP.
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## Ads and child safety
 
-# Learn More
+Ads are disabled by default in `FeatureConfig`. Future monetization should be policy-aware, parent-controlled where appropriate, and isolated behind `AdService`.
 
-To learn more about React Native, take a look at the following resources:
+## Documentation
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+See `docs/` for architecture, adding games, localization, audio, voice, theming, rewards, ads, and testing notes.

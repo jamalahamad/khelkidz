@@ -1,0 +1,33 @@
+export const palette = {
+  mango: '#FFB703',
+  coral: '#FF6B6B',
+  sky: '#4D96FF',
+  mint: '#51CF66',
+  plum: '#845EF7',
+  ink: '#24304A',
+  slate: '#5B667A',
+  cream: '#FFF7E8',
+  white: '#FFFFFF',
+  blush: '#FFE3E3',
+  aqua: '#D8F5F0',
+  lavender: '#EEE7FF',
+  leaf: '#E7F8D7',
+  gold: '#FFD43B',
+  danger: '#F03E3E',
+} as const;
+
+export const semanticColors = {
+  primary: palette.sky,
+  secondary: palette.coral,
+  success: palette.mint,
+  warning: palette.mango,
+  error: palette.danger,
+  reward: palette.gold,
+  background: palette.cream,
+  surface: palette.white,
+  card: palette.white,
+  textPrimary: palette.ink,
+  textSecondary: palette.slate,
+  border: '#E7DCCB',
+  disabled: '#D2D7E2',
+} as const;
